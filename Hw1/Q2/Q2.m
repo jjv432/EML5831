@@ -25,7 +25,7 @@ Wheel.gamma = 0;
 
 %
 des.Y = 0;
-dt = .01;
+dt = .075;
 old_error = 5;
 error_sum = 0;
 drift = 0.1;
