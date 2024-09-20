@@ -79,7 +79,7 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
     if (alpha_1 > alpha_1_min)
         alpha_1 = alpha_1 - alpha_1_delta;
     end
-    fprintf("----------------------------------- %f\n", tick);
+    
     for i = 1:N
         clearvars temp_robot pos error total_error
 
@@ -95,7 +95,7 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
 
             temp_robot = fwdSim(robot, dt);
             [omega, gamma, error] = my_controller(temp_robot, des, old_error, dt, pos);
-            total_error = total_error + error;
+            total_error = total_error + abs(error);
               
             Wheel.gamma = gamma;
             robot.angVel = omega;
@@ -120,7 +120,7 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
 
         %Storing cost if it's better than old global best
         if(abs(new_cost) < abs(G.best_cost))
-            G.best_cost = new_cost
+            G.best_cost = new_cost;
             G.best_pos = pos;
         end
 
