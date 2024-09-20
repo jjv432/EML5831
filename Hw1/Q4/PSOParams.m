@@ -1,7 +1,7 @@
 function [Params] = PSOParams()
 
 %Number of Particles
-Params.N = 50; 
+Params.N = 100; 
 
 %Search Boundaries
 Params.ya = 0;
@@ -13,7 +13,7 @@ Params.xb = 7;
 Params.paricle_names = zeros(1, Params.N);
 
 %Initializing global values
-Params.G.best_cost = 10;
+Params.G.best_cost = 100;
 Params.G.best_pos = [0 0];
 
 %Setting alpha values, and alpha1 max and min
@@ -21,7 +21,7 @@ Params.alpha_1_max = 10;
 Params.alpha_1_min = 1;
 Params.alpha_1_delta = 0.5; %Chnage in alpha 1 each try
 
-Params.alpha_2 = 5;
+Params.alpha_2 = 3;
 Params.alpha_3 = 6.5;
 
 %Setting time variables (seconds)

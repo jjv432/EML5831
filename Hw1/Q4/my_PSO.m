@@ -32,6 +32,7 @@ for j = 1:Params.N
 
     p.(particle_name).vel = [2*rand(1) - 1, 2* rand(1) - 1];
     p.(particle_name).pos = [rand_x, rand_y];
+    
     p.(particle_name).best_cost = 1000;
     p.(particle_name).best_pos = p.(particle_name).pos;
     
@@ -78,24 +79,23 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
     if (alpha_1 > alpha_1_min)
         alpha_1 = alpha_1 - alpha_1_delta;
     end
-    
+    fprintf("----------------------------------- %f\n", tick);
     for i = 1:N
-        
+        clearvars temp_robot pos error total_error
+
         particle_name = particle_names(i);
         pos = p.(particle_name).pos;
         robot =  p.(particle_name).robot;
-
         %% COST
 
-        % drawRobot_Ackerman(robot,Wheel);
-        %total_error = des.Y;
         total_error = 0;
-        
+            
+        % Simulation
         for k = 1:2500
 
-            p.(particle_name).robot = fwdSim(robot, dt);
-            [omega, gamma, error] = my_controller(p.(particle_name).robot, des, old_error, dt, pos);
-            total_error = total_error + abs(error);
+            temp_robot = fwdSim(robot, dt);
+            [omega, gamma, error] = my_controller(temp_robot, des, old_error, dt, pos);
+            total_error = total_error + error;
               
             Wheel.gamma = gamma;
             robot.angVel = omega;
@@ -103,9 +103,11 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
             old_error = error;
         end
         
-        new_cost = error^2;
-        %new_cost = hwFn(pos(1), pos(2));
+        new_cost = total_error/k;
 
+        p.(particle_name).pos = pos;
+        p.(particle_name).robot = temp_robot;
+       
         %% Everything else
 
         old_PB_cost = p.(particle_name).best_cost; %Old personal best cost
@@ -118,7 +120,7 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
 
         %Storing cost if it's better than old global best
         if(abs(new_cost) < abs(G.best_cost))
-            G.best_cost = new_cost;
+            G.best_cost = new_cost
             G.best_pos = pos;
         end
 

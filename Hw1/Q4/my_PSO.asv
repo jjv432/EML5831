@@ -1,4 +1,4 @@
-function [G] = my_PSO(robot, des, old_error, Wheel)
+function [G] = my_PSO(InitialRobot, des, old_error, Wheel)
 
 
 
@@ -32,8 +32,11 @@ for j = 1:Params.N
 
     p.(particle_name).vel = [2*rand(1) - 1, 2* rand(1) - 1];
     p.(particle_name).pos = [rand_x, rand_y];
+    
     p.(particle_name).best_cost = 1000;
     p.(particle_name).best_pos = p.(particle_name).pos;
+    
+    p.(particle_name).robot = InitialRobot;
 
     positions(j, :, 1) = p.(particle_name).pos; %third dimension is time
 
@@ -76,21 +79,25 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
     if (alpha_1 > alpha_1_min)
         alpha_1 = alpha_1 - alpha_1_delta;
     end
-
+    fprintf("----------------------------------- %f\n", tick);
     for i = 1:N
-        
+        clearvars -except p particle_names i dt des old_error
         particle_name = particle_names(i);
         pos = p.(particle_name).pos;
+        robot =  p.(particle_name).robot;
+
+        
 
         %% COST
 
-        % drawRobot_Ackerman(robot,Wheel);
-        total_error = des.Y;
-        
+        total_error = 0;
+            
+        % Simulation
         for k = 1:2500
+
             robot = fwdSim(robot, dt);
             [omega, gamma, error] = my_controller(robot, des, old_error, dt, pos);
-            total_error = total_error + abs(error);
+            total_error = total_error + error*dt;
               
             Wheel.gamma = gamma;
             robot.angVel = omega;
@@ -99,8 +106,10 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
         end
         
         new_cost = total_error;
-        %new_cost = hwFn(pos(1), pos(2));
 
+        p.(particle_name).pos = pos;
+        p.(particle_name).robot = robot;
+       
         %% Everything else
 
         old_PB_cost = p.(particle_name).best_cost; %Old personal best cost
@@ -113,7 +122,7 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
 
         %Storing cost if it's better than old global best
         if(abs(new_cost) < abs(G.best_cost))
-            G.best_cost = new_cost
+            G.best_cost = new_cost;
             G.best_pos = pos;
         end
 
@@ -130,7 +139,7 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
             p.(particle_name).vel = new_vel;
         end
 
-        if ((new_pos(1)>=Params.xa  || new_pos(1)<=Params.xb) && (new_pos(2)>=Params.ya  || new_pos(2)<=Params.yb))
+        if ((new_pos(1)>=Params.xa  && new_pos(1)<=Params.xb) && (new_pos(2)>=Params.ya  && new_pos(2)<=Params.yb))
             p.(particle_name).pos = new_pos;
         end
         
