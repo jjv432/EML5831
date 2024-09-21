@@ -13,16 +13,16 @@ Params.xb = 3;
 Params.paricle_names = zeros(1, Params.N);
 
 %Initializing global values
-Params.G.best_cost = 100;
+Params.G.best_cost = 10;
 Params.G.best_pos = [0 0];
 
 %Setting alpha values, and alpha1 max and min
-Params.alpha_1_max = .9;
-Params.alpha_1_min = 0.5;
-Params.alpha_1_delta = 0.01; %Chnage in alpha 1 each try
+Params.alpha_1_max = 10;
+Params.alpha_1_min = 1;
+Params.alpha_1_delta = 0.5; %Chnage in alpha 1 each try
 
-Params.alpha_2 = 0.1;
-Params.alpha_3 = 4;
+Params.alpha_2 = 3;
+Params.alpha_3 = 6.5;
 
 %Setting time variables (seconds)
 Params.dt = 0.01;

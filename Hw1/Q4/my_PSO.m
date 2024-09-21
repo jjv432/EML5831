@@ -1,4 +1,4 @@
-function [G] = my_PSO(InitialRobot, des, old_error, Wheel)
+function [G] = my_PSO(InitialRobot, des, old_error, InitialWheel)
 
 
 
@@ -32,11 +32,12 @@ for j = 1:Params.N
 
     p.(particle_name).vel = [2*rand(1) - 1, 2* rand(1) - 1];
     p.(particle_name).pos = [rand_x, rand_y];
-    
+
     p.(particle_name).best_cost = 1000;
     p.(particle_name).best_pos = p.(particle_name).pos;
-    
+
     p.(particle_name).robot = InitialRobot;
+    p.(particle_name).wheel = InitialWheel;
 
     positions(j, :, 1) = p.(particle_name).pos; %third dimension is time
 
@@ -70,6 +71,8 @@ tick = 1;
 alpha_1 = alpha_1_max;
 %% Running the PSO
 while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
+
+
     sim_time = sim_time + dt; %simulating passage of time (for change in position)
     tick = tick + 1; %Counting number of dt seconds passed
 
@@ -79,35 +82,55 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
     if (alpha_1 > alpha_1_min)
         alpha_1 = alpha_1 - alpha_1_delta;
     end
-    
+
     for i = 1:N
-        clearvars temp_robot pos error total_error
+
 
         particle_name = particle_names(i);
+        p.(particle_name).robot = InitialRobot;
+        p.(particle_name).wheel = InitialWheel;
         pos = p.(particle_name).pos;
         robot =  p.(particle_name).robot;
         %% COST
 
         total_error = 0;
-            
+        Wheel = p.(particle_name).wheel;
         % Simulation
-        for k = 1:2500
+        if (~(mod(tick-2,50)) && (i==N))
+            drawBool = 1;
+        else
+            drawBool = 0;
+          
+        end
+        if drawBool
+            pause(1)
+            figure()
+            hold on
+            title([particle_name, "iteration", tick-1])
+        end
 
-            temp_robot = fwdSim(robot, dt);
-            [omega, gamma, error] = my_controller(temp_robot, des, old_error, dt, pos);
+        for k = 1:2500
+            if drawBool && ~mod(k-1, 25)
+                pause(.001);
+                drawRobot_Ackerman(robot, Wheel);
+            end
+
+            robot = fwdSim(robot, dt);
+            [omega, gamma, error] = my_controller(robot, des, old_error, dt, pos);
             total_error = total_error + abs(error);
-              
+
             Wheel.gamma = gamma;
             robot.angVel = omega;
-
             old_error = error;
+
         end
-        
+        hold off
         new_cost = total_error/k;
 
         p.(particle_name).pos = pos;
-        p.(particle_name).robot = temp_robot;
-       
+        p.(particle_name).robot = robot;
+        p.(particle_name).wheel = Wheel;
+
         %% Everything else
 
         old_PB_cost = p.(particle_name).best_cost; %Old personal best cost
@@ -140,7 +163,7 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
         if ((new_pos(1)>=Params.xa  && new_pos(1)<=Params.xb) && (new_pos(2)>=Params.ya  && new_pos(2)<=Params.yb))
             p.(particle_name).pos = new_pos;
         end
-        
+
         %Storing the positions into a Nx2xtick matrix
         positions(i,:, tick) = p.(particle_name).pos;
 
@@ -183,7 +206,7 @@ if plotBool
     hold off
 
     %Plotting the global cost vs time (ticks)
-    max_cost = max(global_cost);
+    max_cost = max(global_cost(2:end));
     min_cost = min(global_cost);
     pause(1)
 
@@ -195,11 +218,11 @@ if plotBool
     grid on
 
 
-    for z = 1:plotResolution:tick
+    for z = 1:plotResolution:tick-1
         cla
         plot(1:z, global_cost(1:z));
-        axis([0 tick (min_cost-2) (max_cost+2)]);
-        pause(.5);
+        axis([0 (z+2) (min_cost-2) (max_cost+2)]);
+        %pause(.5);
 
 
     end

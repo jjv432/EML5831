@@ -30,6 +30,7 @@ vehicle_velo_measured = y_test.Ytest(1,:);
 vehicle_omega_measured = y_test.Ytest(2,:);
 
 vehicle_predicted = net(x_test.Xtest);
+
 vehicle_velo_predicted = vehicle_predicted(1,:);
 vehicle_omega_predicted = vehicle_predicted(2,:);
 

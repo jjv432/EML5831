@@ -51,12 +51,14 @@ front_wheel_translated_rotated = [front_wheel_rotated(1,:) + x; front_wheel_rota
 
 
 %Plotting
-clf
+cla
 fill(box_translated_rotated(1,:), box_translated_rotated(2,:), 'b')
 hold on
 grid on
 fill(back_wheel_translated_rotated(1,:), back_wheel_translated_rotated(2,:), 'k');
 hold on
 fill(front_wheel_translated_rotated(1,:), front_wheel_translated_rotated(2,:), 'k')
-axis(12*[-1 1 -1 1])
+axis([(-12+ x) (12+x) -12 12])
+drawnow;
+
 
