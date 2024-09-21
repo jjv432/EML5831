@@ -96,11 +96,11 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
         total_error = 0;
         Wheel = p.(particle_name).wheel;
         % Simulation
-        if (~(mod(tick-2,50)) && (i==N))
+        if (~(mod(tick-2,400)) && (i==N))
             drawBool = 1;
         else
             drawBool = 0;
-          
+
         end
         if drawBool
             pause(1)
@@ -195,7 +195,7 @@ if plotBool
     grid on
 
     for z = 1:plotResolution:tick
-        clf
+        cla
         plot(positions(:, 1, z), positions(:, 2, z), 'x');
         hold on
         axis([(Params.xa*1.25 - 1.25) Params.xb*1.25 (Params.ya*1.25 - 1.25) Params.yb*1.25])
@@ -220,9 +220,9 @@ if plotBool
 
     for z = 1:plotResolution:tick-1
         cla
-        plot(1:z, global_cost(1:z));
+        plot(2:z, global_cost(2:z));
         axis([0 (z+2) (min_cost-2) (max_cost+2)]);
-        %pause(.5);
+        pause(.5);
 
 
     end
@@ -230,5 +230,28 @@ if plotBool
     hold off
 end
 
+pause(1)
+figure()
+hold on
+title("Best Gains Found")
+
+robot = InitialRobot;
+Wheel = InitialWheel;
+
+for k = 1:2500
+
+    pause(.001);
+    drawRobot_Ackerman(robot, Wheel);
+
+
+    robot = fwdSim(robot, dt);
+    [omega, gamma, error] = my_controller(robot, des, old_error, dt, G.best_pos);
+    total_error = total_error + abs(error);
+
+    Wheel.gamma = gamma;
+    robot.angVel = omega;
+    old_error = error;
+
+end
 
 end
