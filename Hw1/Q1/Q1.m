@@ -18,4 +18,5 @@ clearvars
 format compact
 close all
 
+% Call the PSO function
 global_cost_vars = my_PSO;
