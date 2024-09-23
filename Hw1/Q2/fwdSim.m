@@ -12,13 +12,7 @@ X = X + Vel*cos(Phi)*dt;
 Y = Y + Vel*sin(Phi)*dt;
 Phi = Phi + angVel*dt;
 
-%  if (Phi>=pi/2)
-%       Phi = pi/2;
-%   elseif (Phi<=-pi/2)
-%           Phi=-pi/2;
-%   end
-
-%Passing
+%Passing values
 robot.X = X;
 robot.Y = Y;
 robot.Phi = Phi;
