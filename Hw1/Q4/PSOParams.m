@@ -26,7 +26,7 @@ Params.alpha_3 = 6.5;
 
 %Setting time variables (seconds)
 Params.dt = 0.01;
-Params.max_time = 4;
+Params.max_time = 2;
 
 %Setting maximum velocity
 Params.max_vel = 5;
@@ -36,6 +36,6 @@ Params.global_cost(1) = Params.G.best_cost;
 
 %Plotting 
 Params.plotBool = 1; %1 for plots, 0 for no plots
-Params.plotResolution = 10;%How many frames to advance from the previous one
+Params.plotResolution = 50;%How many frames to advance from the previous one
 
 end

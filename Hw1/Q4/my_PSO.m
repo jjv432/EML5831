@@ -1,44 +1,32 @@
 function [G] = my_PSO(InitialRobot, des, old_error, InitialWheel)
 
-
-
 %% Paramater Initialization
 Params = PSOParams();
 
-%% 1.1- Plot Function
-
-% if Params.plotBool
-% xvals = linspace(Params.xa, Params.xb, 100);
-% yvals = linspace(Params.ya, Params.yb, 100);
-%
-% [X, Y] = meshgrid(xvals, yvals);
-%
-% %Z = hwFn(X, Y);
-%
-% figure()
-%     surfc(X, Y, Z);
-%     view(45, 25);
-% end
-
-%% 1.2: PSO Iterations
+%% PSO Iterations
 
 %Generating initial positions and velcities
 for j = 1:Params.N
+
+    % Random initial position
     rand_x = Params.xa + (Params.xb-Params.xa)*rand(1);
     rand_y = Params.ya + (Params.yb-Params.ya)*rand(1);
 
+    % Creating each particle name
     particle_name = string(strcat('p', num2str(j)));
     particle_names(j) = particle_name;
 
+    % Random Velocity
     p.(particle_name).vel = [2*rand(1) - 1, 2* rand(1) - 1];
+
+    % Assigning random position to the particle
     p.(particle_name).pos = [rand_x, rand_y];
 
+    % Arbitrarily assigning personal best for the particle
     p.(particle_name).best_cost = 1000;
     p.(particle_name).best_pos = p.(particle_name).pos;
 
-    p.(particle_name).robot = InitialRobot;
-    p.(particle_name).wheel = InitialWheel;
-
+    % Storing these positions in an array
     positions(j, :, 1) = p.(particle_name).pos; %third dimension is time
 
 end
@@ -65,13 +53,13 @@ max_vel = Params.max_vel;
 N = Params.N;
 
 %% Values that won't change w/ dif simulations
-global_improvement = 1;
+
 sim_time = 0;
 tick = 1;
 alpha_1 = alpha_1_max;
-%% Running the PSO
-while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
 
+%% Running the PSO
+while((G.best_cost ~= 0) && (sim_time <= max_time))
 
     sim_time = sim_time + dt; %simulating passage of time (for change in position)
     tick = tick + 1; %Counting number of dt seconds passed
@@ -79,29 +67,39 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
     %Storing all the best cost to plot later
     global_cost(tick) = G.best_cost;
 
+    % Linearlly decrease alpha 1 until a certain point each loop
     if (alpha_1 > alpha_1_min)
         alpha_1 = alpha_1 - alpha_1_delta;
     end
 
+    % loop on each particle
     for i = 1:N
 
-
+        % Retrieve particle name
         particle_name = particle_names(i);
+
+        % Reset robot and wheel to initial conditions
         p.(particle_name).robot = InitialRobot;
         p.(particle_name).wheel = InitialWheel;
+
+        % Ease of use
         pos = p.(particle_name).pos;
         robot =  p.(particle_name).robot;
-        %% COST
 
+        % COST
         total_error = 0;
         Wheel = p.(particle_name).wheel;
+
         % Simulation
-        if (~(mod(tick-2,400)) && (i==N))
+
+        % Determine to draw or not (every 400 frames)
+        if (~(mod(tick-2,200)) && (i==N))
             drawBool = 1;
         else
             drawBool = 0;
-
         end
+
+        % Initialize the figure if drawBool
         if drawBool
             pause(1)
             figure()
@@ -109,6 +107,7 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
             title([particle_name, "iteration", tick-1])
         end
 
+        % Animate the robot every 25 frames if drawBool
         for k = 1:2500
             if drawBool && ~mod(k-1, 25)
                 pause(.001);
@@ -125,13 +124,16 @@ while((G.best_cost ~= 0) && (sim_time <= max_time)) %&& global_improvement)
 
         end
         hold off
+
+        % Calculating new cost
         new_cost = total_error/k;
 
+        % Storing pos, robot, and wheel
         p.(particle_name).pos = pos;
         p.(particle_name).robot = robot;
         p.(particle_name).wheel = Wheel;
 
-        %% Everything else
+        % Updating PSO bests
 
         old_PB_cost = p.(particle_name).best_cost; %Old personal best cost
 
@@ -181,6 +183,8 @@ fprintf("\n\nBest cost of %.2f found at (%.2f, %.2f)\n\n", G.best_cost, G.best_p
 
 
 %% 1.3 Plotting/ Animating
+
+% Plot parameters
 plotBool = Params.plotBool;
 plotResolution = Params.plotResolution;
 
@@ -194,6 +198,7 @@ if plotBool
     ylabel('y')
     grid on
 
+    % Plot particle locations
     for z = 1:plotResolution:tick
         cla
         plot(positions(:, 1, z), positions(:, 2, z), 'x');
@@ -217,7 +222,7 @@ if plotBool
     ylabel("Global Cost")
     grid on
 
-
+    % Animating global_cost v time
     for z = 1:plotResolution:tick-1
         cla
         plot(2:z, global_cost(2:z));
@@ -238,11 +243,11 @@ title("Best Gains Found")
 robot = InitialRobot;
 Wheel = InitialWheel;
 
-for k = 1:2500
+% Plot the best combination of kp and kd regardless of plotBool
+for k = 1:plotResolution:2500
 
     pause(.001);
     drawRobot_Ackerman(robot, Wheel);
-
 
     robot = fwdSim(robot, dt);
     [omega, gamma, error] = my_controller(robot, des, old_error, dt, G.best_pos);
