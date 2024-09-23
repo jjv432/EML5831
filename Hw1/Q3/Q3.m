@@ -2,6 +2,7 @@
 clc
 format compact
 close all
+clear all
 
 %% Organizing provided training data
 y_train = load('./dataForStudents/Ytrain.mat');
