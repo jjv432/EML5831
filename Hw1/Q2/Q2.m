@@ -1,6 +1,6 @@
 %% Format
 clc
-
+clear all
 close all
 format compact
 
@@ -39,7 +39,7 @@ error_sum = 0;
 drift = 0.1;
 
 % hand picked gains
-gains = [0.2 0.9 0.1];
+gains = [.2 .9 .1];
 
 % Simulates and draws robot positions with controller
 for i = 1:2500
@@ -48,13 +48,13 @@ for i = 1:2500
     pause(0)
     width = robot.width;
     robot = fwdSim(robot, dt);
-    [omega, gamma, error] = my_controller(robot, des, old_error, error_sum, dt, gains, drift);
+    [omega, gamma, error] = my_controller(robot, des, old_error, error_sum, dt, gains, width, drift);
 
     Wheel.gamma = gamma;
     robot.angVel = omega;
    
     old_error = error;
-    error_sum = old_error + error;
+   
 
 end
 
