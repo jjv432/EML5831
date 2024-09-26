@@ -49,6 +49,7 @@ figure()
     xlabel("\omega_r")
     ylabel("\omega_l")
     zlabel("Velocity")
+    legend("Measured", "Predicted")
 
 % Test v predicted Angular Velocity
 figure()
@@ -59,3 +60,4 @@ figure()
     xlabel("\omega_r")
     ylabel("\omega_l")
     zlabel("\omega")
+    legend("Measured", "Predicted")
