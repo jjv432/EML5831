@@ -42,7 +42,7 @@ drift = 0.1;
 gains = [.2 .9 .1];
 
 % Simulates and draws robot positions with controller
-for i = 1:2500
+for i = 1:500
     clf
     y_front_wheel = drawRobot_Ackerman(robot, Wheel);
     pause(0)
@@ -54,32 +54,23 @@ for i = 1:2500
     robot.angVel = omega;
    
     old_error = error;
+
+    steering_angles(i) = gamma;
    
 
 end
 
+figure()
+    plot(steering_angles)
+    xlabel("Iteration");
+    ylabel("Steering Angle \gamma");
+    title("Steering Angle vs Iteration")
 
-
-
-
-
-
-
-
-
-
-
-
-% %Plotting
-% 
-% robot.phi = pi/2;
-% for i = 1:length(x_vals)
-%     clf
-%     robot.x = x_vals(i);
-%     robot.y = y_vals(i);
-%     robot.phi = robot.phi + 2*pi/sample_length;
-%     drawRobot_Ackerman(robot, Wheel);
-%     pause(0)
-% 
-% 
-% end
+%%
+%
+% <include>drawRobot_Ackerman.m</include> 
+%
+% <include>my_controller.m</include>
+%
+% <include>fwdSim.m</include>
+%
