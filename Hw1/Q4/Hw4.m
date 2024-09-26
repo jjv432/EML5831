@@ -30,3 +30,15 @@ InitialRobot = robot;
 G = my_PSO(InitialRobot, des, old_error, Wheel);
 
 
+%%
+%
+% <include>PSOParams.m</include> 
+%
+% <include>my_PSO.m</include>
+%
+% <include>my_controller.m</include>
+%
+% <include>fwdSim.m</include>
+%
+% <include>drawRobot_Ackerman.m</include>
+%
