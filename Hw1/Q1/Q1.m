@@ -5,8 +5,8 @@
 
 %{
     Implement the PSO algorithm to minimize the following function
-    𝑓(𝑥, 𝑦) = (𝑥 − 4)2 − 7 ∗ 𝑐𝑜𝑠(2𝜋(𝑥 − 4)) + 𝑦2 − 7𝑐𝑜𝑠(2𝜋𝑦)
-    with 𝑥 ∈ [−7 7] 𝑎𝑛𝑑 𝑦 ∈ [−7 7]
+    f(x,y) = (x − 4)^2 − 7 ∗ cos(2pi(x − 4)) + y2 − 7cos(2piy)
+    with x E [−7 7] and y E [−7 7]
 %}
 
 %https://www.mathworks.com/matlabcentral/answers/66763-generate-random-numbers-in-range-from-0-8-to-4
@@ -20,3 +20,12 @@ close all
 
 % Call the PSO function
 global_cost_vars = my_PSO;
+
+%%
+%
+% <include>PSOParams.m</include> 
+%
+% <include>my_PSO.m</include>
+%
+% <include>hwFn.m</include>
+%

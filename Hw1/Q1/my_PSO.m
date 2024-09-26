@@ -18,8 +18,14 @@ if Params.plotBool
     Z = hwFn(X, Y);
 
     figure()
+        hold on
         surfc(X, Y, Z);
         view(45, 25);
+        xlabel("X")
+        ylabel("Y")
+        zlabel("Z (Cost)")
+        title("Cost Function")
+        hold off
 end
 
 %% 1.2: PSO Iterations
@@ -172,7 +178,7 @@ if plotBool
     
     % This allows for the positions plot to animate
     for z = 1:plotResolution:tick
-        clf
+        cla
         plot(positions(:, 1, z), positions(:, 2, z), 'x');
         hold on
         axis([Params.xa*1.25 Params.xb*1.25 Params.ya*1.25 Params.yb*1.25])
