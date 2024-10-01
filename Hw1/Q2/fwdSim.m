@@ -12,6 +12,8 @@ X = X + Vel*cos(Phi)*dt;
 Y = Y + Vel*sin(Phi)*dt;
 Phi = Phi + angVel*dt;
 
+Phi = atan2(sin(Phi), cos(Phi));
+
 %Passing values
 robot.X = X;
 robot.Y = Y;
