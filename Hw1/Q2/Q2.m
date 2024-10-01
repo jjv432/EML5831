@@ -30,7 +30,7 @@ des.Y = 0;
 dt = .075;
 
 % initial error in y
-old_error = 5;
+old_error = des.Y - robot.Y;
 
 % tracks total error
 error_sum = 0;
@@ -39,7 +39,7 @@ error_sum = 0;
 drift = 0.1;
 
 % hand picked gains
-gains = [.2 .9 .1];
+gains = [.3 2 .05];
 
 % Simulates and draws robot positions with controller
 for i = 1:500
@@ -48,7 +48,7 @@ for i = 1:500
     pause(0)
     width = robot.width;
     robot = fwdSim(robot, dt);
-    [omega, gamma, error] = my_controller(robot, des, old_error, error_sum, dt, gains, width, drift);
+    [omega, gamma, error, error_sum] = my_controller(robot, des, old_error, error_sum, dt, gains, width, drift);
 
     Wheel.gamma = gamma;
     robot.angVel = omega;
