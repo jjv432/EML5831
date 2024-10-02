@@ -43,8 +43,7 @@ gains = [.3 2 .05];
 
 % Simulates and draws robot positions with controller
 for i = 1:500
-    clf
-    y_front_wheel = drawRobot_Ackerman(robot, Wheel);
+    y_front_wheel = drawRobot_Ackerman(robot, Wheel,i);
     pause(0)
     width = robot.width;
     robot = fwdSim(robot, dt);

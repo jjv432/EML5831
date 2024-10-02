@@ -1,4 +1,4 @@
-function [y_front_wheel] = drawRobot_Ackerman(robot, Wheel)
+function [y_front_wheel] = drawRobot_Ackerman(robot, Wheel, i)
 
 
 %% Main body
@@ -58,6 +58,8 @@ front_wheel_translated_rotated = [front_wheel_rotated(1,:) + x; front_wheel_rota
 
 
 %% Plotting
+
+if (mod(i-1, 10) == 0)
 cla
 fill(box_translated_rotated(1,:), box_translated_rotated(2,:), 'b')
 hold on
@@ -67,4 +69,5 @@ hold on
 fill(front_wheel_translated_rotated(1,:), front_wheel_translated_rotated(2,:), 'k')
 axis([(-12+ x) (12+x) -12 12])
 drawnow;
+end
 
