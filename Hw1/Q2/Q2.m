@@ -40,7 +40,7 @@ drift = 0.1;
 
 % hand picked gains
 gains = [.3 2 .05];
-
+y_values = [];
 % Simulates and draws robot positions with controller
 for i = 1:500
     y_front_wheel = drawRobot_Ackerman(robot, Wheel,i);
@@ -55,6 +55,8 @@ for i = 1:500
     old_error = error;
 
     steering_angles(i) = gamma;
+
+    y_values(i) = robot.Y;
    
 
 end
@@ -64,7 +66,11 @@ figure()
     xlabel("Iteration");
     ylabel("Steering Angle \gamma");
     title("Steering Angle vs Iteration")
-
+figure()
+    plot(y_values)
+    xlabel("Iteration");
+    ylabel("Cross Track Error");
+    title("Cross Track Error v Time")
 %%
 %
 % <include>drawRobot_Ackerman.m</include> 
