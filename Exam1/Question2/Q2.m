@@ -5,7 +5,7 @@ format compact
 
 %% Create robot parameters 
 Body.x = 0;
-Body.y = 0;
+Body.y = 1;
 Body.phi = pi/2;
 Body.radius = 1;
 Body.width = 1;
@@ -42,8 +42,8 @@ Range_Resolution = .01;
 
 %% Create Trajectory (AXE?)
 
-sample_num = 1000;
-sample_length = 2;
+sample_num = 10;
+sample_length = .5;
 circle_radius = 3;
 
 x_vals = zeros(sample_num,1) + Body.x;
@@ -53,41 +53,60 @@ y_vals = (linspace(0, sample_length, sample_num)) + Body.y;
 
 
 Body.phi = pi/2;
+thetas = 0:(pi/180):2*pi;
 
-for i = 1:length(x_vals)
+for i = 1:sample_num
+
     Body.x = x_vals(i);
     Body.y = y_vals(i);
     [h1, h2, h3] = drawRobot(Body, Wheel);
 
-    thetas = linspace(0, 2*pi, 50);
-
+   
     SearchOuterX_Vals = Max_Range * cos(thetas) + Body.x;
     SearchOuterY_Vals = Max_Range * sin(thetas) + Body.y;
     
-    SearchInnerX_Vals = Min_Range * cos(thetas);
-    SearchInnerY_Vals = Min_Range * sin(thetas);
+    SearchInnerX_Vals = Min_Range * cos(thetas) + Body.x;
+    SearchInnerY_Vals = Min_Range * sin(thetas) + Body.y;
 
 
-    % Doing q and v wrong?
-    xq = [Square.XVals, Circle.XVals, Rectangle.XVals];
-    yq = [Square.YVals, Circle.YVals, Rectangle.YVals];
+    xq = [SearchOuterX_Vals, NaN(1,1), (SearchInnerX_Vals)];
+    yq = [SearchOuterY_Vals, NaN(1,1), (SearchInnerY_Vals)];
 
-    xv = [SearchOuterX_Vals, NaN(1,1), (SearchInnerX_Vals)];
-    yv = [SearchOuterY_Vals, NaN(1,1), (SearchInnerY_Vals)];
 
-    [in, on] = inpolygon(xq, yq, xv, yv);
-    h4 = plot(xq(in),yq(in),'bx');
-    h5 = plot(SearchOuterX_Vals(~in(1:length(SearchOuterX_Vals))), SearchOuterY_Vals(~in(1:length(SearchOuterY_Vals))), 'bx');
+    for a = 1:length(thetas)
+        x(a) = xq(a);
+        y(a) = yq(a);
+
+        inCircle  = inpolygon(x(a), y(a), Circle.XVals, Circle.YVals);
+        inRectangle = inpolygon(x(a), y(a), Rectangle.XVals, Rectangle.YVals);
+        inSquare = inpolygon(x(a), y(a), Square.XVals, Square.YVals);
+
+        while (inCircle)
+            x(a) = x(a)- Range_Resolution;% * cos(a);
+            y(a) = y(a)- Range_Resolution;% * sin(a);
+            inCircle  = inpolygon(x(a), y(a), Circle.XVals, Circle.YVals);
+        end
+
+        while (inRectangle)
+            x(a) = x(a) +  Range_Resolution;% * cos(a);
+            y(a) = y(a) + Range_Resolution;% * sin(a);
+            inRectangle = inpolygon(x(a), y(a), Rectangle.XVals, Rectangle.YVals);
+        end
+
+        while (inSquare)
+            x(a) = x(a) - Range_Resolution;% * cos(a);
+            y(a) = y(a) - Range_Resolution;% * sin(a);
+            inSquare = inpolygon(x(a), y(a), Square.XVals, Square.YVals);
+        end
+    end
     
+    h4 = plot(x, y, 'bx');
+    pause(1)
+    delete(h1)
+    delete(h2)
+    delete(h3)
+    delete(h4)
     
-    pause(0)
-    delete(h1);
-    delete(h2);
-    delete(h3);
-    delete(h4);
-    delete(h5);
-
-
 end
 %%
 %
