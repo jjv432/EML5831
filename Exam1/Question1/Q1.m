@@ -2,7 +2,7 @@ clearvars -except Dynamic StaticA StaticB StaticC
 close all
 clc
 %% Load the data
-dataBool = 0;
+dataBool = 1;
 
 if dataBool
 
@@ -46,6 +46,8 @@ plot(StaticA.Time, StaticA.Acceleration.Y)
 plot(StaticA.Time, StaticA.Acceleration.Z)
 legend("X", "Y", "Z")
 title("Static A Accelerometer")
+xlabel("Time (s)")
+ylabel("Acceleration (m/s/s)")
 
 figure()
 hold on
@@ -54,6 +56,8 @@ plot(StaticB.Time, StaticB.Acceleration.Y)
 plot(StaticB.Time, StaticB.Acceleration.Z)
 legend("X", "Y", "Z")
 title("Static B Accelerometer")
+xlabel("Time (s)")
+ylabel("Acceleration (m/s/s)")
 
 figure()
 hold on
@@ -62,6 +66,8 @@ plot(StaticC.Time, StaticC.Acceleration.Y)
 plot(StaticC.Time, StaticC.Acceleration.Z)
 legend("X", "Y", "Z")
 title("Static C Accelerometer")
+xlabel("Time (s)")
+ylabel("Acceleration (m/s/s)")
 
 % Body Rates
 figure()
@@ -71,14 +77,18 @@ plot(StaticA.Time, StaticA.Orientation.Y)
 plot(StaticA.Time, StaticA.Orientation.Z)
 legend("X", "Y", "Z")
 title("Static A Gyro")
+xlabel("Time (s)")
+ylabel("Angle (deg)")
 
 figure()
 hold on
 plot(StaticB.Time(1:(end-1)), StaticB.Orientation.X)
 plot(StaticB.Time(1:(end-1)), StaticB.Orientation.Y)
 plot(StaticB.Time(1:(end-1)), StaticB.Orientation.Z)
-    legend("X", "Y", "Z")
+legend("X", "Y", "Z")
 title("Static B Gyro")
+xlabel("Time (s)")
+ylabel("Angle (deg)")
 
 figure()
 hold on
@@ -87,6 +97,8 @@ plot(StaticC.Time(1:(end-2)), StaticC.Orientation.Y)
 plot(StaticC.Time(1:(end-2)), StaticC.Orientation.Z)
 legend("X", "Y", "Z")
 title("Static C Gyro")
+xlabel("Time (s)")
+ylabel("Angle (deg)")
 
 %% 1 B
 
@@ -110,7 +122,7 @@ thetaC = (180/pi) * atan2(StaticCAccelY, StaticCAccelZ);
 
 % Angle[k] = [theta_dot_gyro * dt + angle_[k-1]]G + theta_accel *
 % (1-G);
-temp = 330;
+temp = 319;
 DynamicOrientationX = Dynamic.Orientation.X(1:temp);
 DynamicOrientationY = Dynamic.Orientation.Y(1:temp);
 DynamicOrientationZ = Dynamic.Orientation.Z(1:temp);
@@ -122,19 +134,18 @@ plot(DynamicOrientationY)
 plot(DynamicOrientationZ)
 %legend("X", "Y", "Z")
 
-Angle(1) = thetaA;
+%Angle(1) = thetaA;
 dt = Dynamic.Time(2) - Dynamic.Time(1);
 
-Gs = [.99 .93 .82];
+Gs = [.99 .93 .82 .75];
 
 for t = 1:length(Gs)
 
     G = Gs(t);
 
-for k = 2:length(DynamicOrientationY)
+for k = 1:length(DynamicOrientationY)
 
-    Angle(k) = (DynamicOrientationY(k) * dt + Angle(k-1)) * G + Dynamic.Acceleration.Z(k) * (1-G);
-   
+    Angle(k) = -(DynamicOrientationY(k)) * G + Dynamic.Acceleration.Z(k) * (1-G);
 
 end
 

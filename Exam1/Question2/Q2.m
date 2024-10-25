@@ -101,7 +101,7 @@ for i = 1:sample_num
     end
     
     h4 = plot(x, y, 'bx');
-    pause(1)
+    pause(.001)
     delete(h1)
     delete(h2)
     delete(h3)
