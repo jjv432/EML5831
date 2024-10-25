@@ -14,7 +14,7 @@ function [omega, gamma, error, error_sum] = my_controller(robot, des, old_error,
       gamma = kp*error + kd*(error-old_error)/dt;
   end
 
-  gamma = gamma + drift;
+ gamma = gamma + drift;
   
 %gamma = atan2(sin(gamma), cos(gamma));
 
