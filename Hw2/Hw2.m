@@ -19,8 +19,7 @@ velocities = [.5, .5, .75, .75, 1, 1];
 velocities = [velocities , 1 3 5]; % auto ones
 lookaheadDists =  [.5 1 .5 1 .5 1];
 
-for j = 7:length(velocities)
-
+for j = 1:length(velocities)
 
 
     clearvars -except robot j dt waypointlist velocities lookaheadDists
@@ -129,12 +128,10 @@ for j = 7:length(velocities)
         distanceRobotFinalPoint = getEuclideanDistance(robot.X,robot.Y,waypoints(NwayPoints,1),waypoints(NwayPoints,2));
 
 
-
+        % Caclulate new lookahead for last three trials
         if j >6
             distanceWaypoint = getEuclideanDistance(robot.X,robot.Y,waypoints(purepursuit.goalPointIndex,1),waypoints(purepursuit.goalPointIndex,2));
-            a1 = .10;
-            a2 = 1 - a1;
-            purepursuit.lookahead = (a1 * robot.vel) + (a2 * (1/distanceRobotFinalPoint))^(3/2);
+            purepursuit.lookahead = .05 * robot.vel / distanceWaypoint;
         else
             purepursuit.lookahead = lookaheadDists(j);
         end
@@ -144,10 +141,6 @@ for j = 7:length(velocities)
 
     end
     % Draw your robot at the new pose
-
-
-
-
     plot(waypoints(:,1),waypoints(:,2),'o','MarkerSize',5,'Linewidth',2);
     plot(x, y);
     xlabel("X (m)")
@@ -155,7 +148,7 @@ for j = 7:length(velocities)
     legend('Waypoints' , 'Robot Path');
     grid on
     if j > 6
-        title(strcat("A1: ", num2str(a1), strcat(" A2: ", num2str(a2)), strcat(" Velocity: ", num2str(round((robot.vel), 3)))));
+        title(strcat("Automatic Lookahead For: ", num2str(round(robot.vel, 3))));
     else
         title(strcat("Look Ahead: ", num2str(purepursuit.lookahead), strcat(" Velocity: ", num2str(round((robot.vel), 3)))));
     end
