@@ -16,10 +16,10 @@ waypointlist = [
 ];
 
 velocities = [.5, .5, .75, .75, 1, 1];
-velocities = [velocities , .5 .75 1]; % auto ones
+velocities = [velocities , 1 3 5]; % auto ones
 lookaheadDists =  [.5 1 .5 1 .5 1];
 
-for j = 1:length(velocities)
+for j = 7:length(velocities)
 
 
 
@@ -128,10 +128,13 @@ for j = 1:length(velocities)
         % Compute distance to Final point to determine if robot should stop
         distanceRobotFinalPoint = getEuclideanDistance(robot.X,robot.Y,waypoints(NwayPoints,1),waypoints(NwayPoints,2));
 
+
+
         if j >6
-            a1 = .25;
-            a2 = .75;
-            purepursuit.lookahead = a1 * robot.vel + a2 * (1/distanceRobotFinalPoint + .01);
+            distanceWaypoint = getEuclideanDistance(robot.X,robot.Y,waypoints(purepursuit.goalPointIndex,1),waypoints(purepursuit.goalPointIndex,2));
+            a1 = .10;
+            a2 = 1 - a1;
+            purepursuit.lookahead = (a1 * robot.vel) + (a2 * (1/distanceRobotFinalPoint))^(3/2);
         else
             purepursuit.lookahead = lookaheadDists(j);
         end
