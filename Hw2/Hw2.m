@@ -22,7 +22,7 @@ lookaheadDists =  [.5 1 .5 1 .5 1];
 for j = 1:length(velocities)
 
 
-    clearvars -except robot j dt waypointlist velocities lookaheadDists
+    %clearvars -except robot j dt waypointlist velocities lookaheadDists waypoints
     pause(1)
 
 
@@ -78,11 +78,14 @@ for j = 1:length(velocities)
     axis([-5 5 -5 5])
     axis('equal')
     drawRobot(hgTX,robot)
+    
 
 
     %waypoints = waypointlist(:, (2*j-1):(2*j));
     waypoints = waypointlist(:, 1:2);
 
+    plot(waypoints(:,1),waypoints(:,2),'o','MarkerSize',5,'Linewidth',2);
+    
     % Compute distance to last waypoint.
     [NwayPoints, dim] = size(waypoints);
     distanceRobotFinalPoint = getEuclideanDistance(robot.X,robot.Y,waypoints(NwayPoints,1),waypoints(NwayPoints,2));
@@ -121,7 +124,7 @@ for j = 1:length(velocities)
         robot = fwdSim(robot,dt);
 
         % % Draw your robot at the new pose
-        % drawRobot(hgTX,robot);
+        drawRobot(hgTX,robot);
         pause(0.01);
 
         % Compute distance to Final point to determine if robot should stop
@@ -141,7 +144,7 @@ for j = 1:length(velocities)
 
     end
     % Draw your robot at the new pose
-    plot(waypoints(:,1),waypoints(:,2),'o','MarkerSize',5,'Linewidth',2);
+    
     plot(x, y);
     xlabel("X (m)")
     ylabel("Y (m)")
