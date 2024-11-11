@@ -30,6 +30,7 @@ HT = inv(H);
 % Start on rectified image, use HT to find location on the original image,
 % steal the color, and plug it back into the pixel from the original image
 
+
 for row = 100:600
     for col = 200:600
         p_tilde = HT * [col row 1]';
