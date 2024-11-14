@@ -3,77 +3,66 @@ clear all;
 close all;
 format compact;
 
-COE = imread("CornerCOE.jpg");
-COE2 = imresize(COE, [640 NaN]); %Nan makes scaling proportional
-COE2 = im2double(COE2);
+% COE = imread("CornerCOE.jpg");
+% COE2 = imresize(COE, [640 NaN]); %Nan makes scaling proportional
+% COE2 = im2gray(COE2);
+% 
+% points = detectORBFeatures(COE2);
+% 
+% figure();
+% imshow(COE2);
+% hold on
+% plot(points, 'ShowScale', false);
 
-x_vals = 1:size(COE2, 1);
-y_vals = 1:size(COE2, 2);
+%% Initial ORB for each place
 
+% Room
 
-intensityMap = getIntensity(COE2);
+room = imread("recognitionImages/room1.jpg");
+room2 = imresize(room, [640 NaN]); %Nan makes scaling proportional
+room2 = im2gray(room2);
 
-syms x y;
+roomPoints = detectORBFeatures(room2);
 
-% Jx = jacobian(intensityMap(x,y), [x])
+% Living Room
 
-[Tx, Ty] = gradient(intensityMap);
+living_room = imread("recognitionImages/livingRoom1.jpg");
+living_room2 = imresize(living_room, [640 NaN]); %Nan makes scaling proportional
+living_room2 = im2gray(living_room2);
 
-% The jacobian is the transpose of the gradient
-Jx = transpose(Tx);
-Jy = transpose(Ty);
+living_roomPoints = detectORBFeatures(living_room2);
 
-A = 0; 
-B = 0; 
-C = 0; 
-D = 0;
+% Kitchen
 
-edgeIndices = [];
+kitchen = imread("recognitionImages/kitchen1.jpg");
+ktichen2 = imresize(kitchen, [640 NaN]); %Nan makes scaling proportional
+ktichen2 = im2gray(ktichen2);
 
-for u = 1:length(x_vals)
-    for v = 1:length(y_vals)
-        A = (Jx(v, u))^2;
-        B = Jx(v, u) * Jy(v, u);
-        C = Jy(v, u) * Jx(v, u);
-        D = (Jy(v, u))^2;
-        stucutreMatrix = [A, B; C, D];
+kitchenPoints = detectORBFeatures(ktichen2);
 
-        if D > .02
-            edgeIndices = [edgeIndices; u, v];
-        end
-    end
-end
+% Classroom
 
-figure()
-imshow(COE2);
-hold on
-plot(edgeIndices, 'rx', 'MarkerSize', 10)
+classroom = imread("recognitionImages/classroom1.jpg");
+classroom2 = imresize(classroom, [640 NaN]); %Nan makes scaling proportional
+classroom2 = im2gray(classroom2);
 
-figure
-surfc(intensityMap);
-title("Itensity Image");
+classroomPoints = detectORBFeatures(classroom2);
 
+%% Comparing images
 
+testImage = imread("recognitionImages/classroom2.jpg");
+testImage2 = imresize(testImage, [640 NaN]); %Nan makes scaling proportional
+testImage2 = im2gray(testImage2);
 
-function intensityMap = getIntensity(image)
+testImagePoints = detectORBFeatures(testImage2);
 
-% https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
-x_length = size(image, 1);
-y_length = size(image, 2);
+[features1,valid_points1] = extractFeatures(testImage2,testImagePoints);
+[features2,valid_points2] = extractFeatures(classroom2,classroomPoints);
 
-intensityMap = zeros(x_length, y_length);
+indexPairs = matchFeatures(features1,features2);
 
-for x = 1:x_length
-    for y = 1:y_length
-        RGB = image(x, y, :);
+matchedPoints1 = valid_points1(indexPairs(:,1),:);
+matchedPoints2 = valid_points2(indexPairs(:,2),:);
 
-        R = RGB(1);
-        G = RGB(2);
-        B = RGB(3);
-        intensity = (R+R+B+G+G+G)/6;
-        intensityMap(x,y) = intensity;
-
-    end
-end
-
-end
+figure; 
+showMatchedFeatures(testImage2,classroom2,matchedPoints1,matchedPoints2);
