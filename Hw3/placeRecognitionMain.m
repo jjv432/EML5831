@@ -29,19 +29,25 @@ classroom = imread("recognitionImages/classroom1.jpg");
 classroom2 = imresize(classroom, [640 NaN]); %Nan makes scaling proportional
 classroom2 = im2gray(classroom2);
 
+% Lab
+
+lab = imread("recognitionImages/lab1.jpg");
+lab2 = imresize(lab, [640 NaN]); %Nan makes scaling proportional
+lab2 = im2gray(lab2);
+
 % Compile List of all of the images
-grayImages = cat(3, room2, living_room2, kitchen2, classroom2);
+grayImages = cat(3, room2, living_room2, kitchen2, classroom2, lab2);
 
 
 %% Comparing images
 bestImageIndex = 0;
 maxIndexPairs = 0;
-imageList = ["room1.jpg", "livingRoom1.jpg", "kitchen1.jpg", "classroom1.jpg"];
-locationNames = ["Bedroom", "LivingRoom", "Kitchen", "Classroom"];
+imageList = ["room1.jpg", "livingRoom1.jpg", "kitchen1.jpg", "classroom1.jpg", "lab1.jpg"];
+locationNames = ["Bedroom", "LivingRoom", "Kitchen", "Classroom", "Lab"];
 
 % Generate the test image
 
-testImage = imread("recognitionImages/classroom2.jpg");
+testImage = imread("recognitionImages/lab2.jpg");
 testImage2 = imresize(testImage, [640 NaN]); %Nan makes scaling proportional
 testImage2 = im2gray(testImage2);
 
