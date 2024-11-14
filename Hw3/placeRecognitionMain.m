@@ -40,19 +40,24 @@ grayImages = cat(3, room2, living_room2, kitchen2, classroom2, lab2);
 
 
 %% Comparing images
-bestImageIndex = 0;
-maxIndexPairs = 0;
+
 imageList = ["room1.jpg", "livingRoom1.jpg", "kitchen1.jpg", "classroom1.jpg", "lab1.jpg"];
+testImageList = ["room2.jpg", "livingRoom2.jpg", "kitchen2.jpg", "classroom2.jpg", "lab2.jpg"];
+testImageList = flip(testImageList);
 locationNames = ["Bedroom", "LivingRoom", "Kitchen", "Classroom", "Lab"];
 
+for j = 1:length(testImageList)
 % Generate the test image
 
-testImage = imread("recognitionImages/lab2.jpg");
+testImage = imread(strcat("recognitionImages/", testImageList(j)));
 testImage2 = imresize(testImage, [640 NaN]); %Nan makes scaling proportional
 testImage2 = im2gray(testImage2);
 
 testPointsOrb = detectORBFeatures(testImage2);
 testPointsSurf = detectSURFFeatures(testImage2);
+
+bestImageIndex = 0;
+maxIndexPairs = 0;
 
 % ORB Comparison
 for i = 1:length(imageList)
@@ -79,7 +84,7 @@ for i = 1:length(imageList)
 
 end
 
-fprintf("Using ORB, the test image looks like the %s\n", locationNames(bestImageIndex))
+fprintf("Using ORB, %s looks like the %s\n", testImageList(j), locationNames(bestImageIndex))
 
 
 figure;
@@ -116,10 +121,12 @@ for i = 1:length(imageList)
 
 end
 
-fprintf("Using SURF, the test image looks like the %s\n", locationNames(bestImageIndex))
+fprintf("Using SURF, %s looks like the %s\n", testImageList(j), locationNames(bestImageIndex))
 
 
 figure;
 showMatchedFeatures(matchImage,testImage2,matchedPoints1,matchedPoints2);
 drawnow;
 title("Closest Matching Image Using SURF")
+
+end
