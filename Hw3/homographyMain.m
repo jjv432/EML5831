@@ -3,7 +3,7 @@ clc; clear all; close all; format compact;
 COE = imread("CornerCOE.jpg");
 COE2 = imresize(COE, [640 NaN]); %Nan makes scaling proportional
 
-GWB = imread("CamiloOrdonez_0.jpg");
+GWB = imread("GirlWithBalloon.jpg");
 GWB2 = imresize(GWB, [320 NaN]); %Nan makes scaling proportional
 
 % Points on graffiti
@@ -11,9 +11,8 @@ px = [0 size(GWB2, 2) size(GWB2, 2) 0];
 py = [0 0 size(GWB2, 1) size(GWB2, 1)];
 
 % Points on wall
-%Clockwise from top left
-qx = [363 452 452 363];
-qy = [228 172 273 311];
+qx = [363 403 403 363];
+qy = [273 252 295 311];
 
 % H maps points from p to q
 H = myhomography(px, py, qx, qy);
