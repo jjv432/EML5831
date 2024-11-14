@@ -13,6 +13,10 @@ y_vals = 1:size(COE2, 2);
 
 intensityMap = getIntensity(COE2);
 
+syms x y;
+
+% Jx = jacobian(intensityMap(x,y), [x])
+
 [Tx, Ty] = gradient(intensityMap);
 
 % The jacobian is the transpose of the gradient
