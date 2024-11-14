@@ -50,19 +50,53 @@ classroomPoints = detectORBFeatures(classroom2);
 
 %% Comparing images
 
-testImage = imread("recognitionImages/classroom2.jpg");
+% testImage = imread("recognitionImages/classroom2.jpg");
+% testImage2 = imresize(testImage, [640 NaN]); %Nan makes scaling proportional
+% testImage2 = im2gray(testImage2);
+% 
+% testImagePoints = detectORBFeatures(testImage2);
+% 
+% [features1,valid_points1] = extractFeatures(testImage2,testImagePoints);
+% [features2,valid_points2] = extractFeatures(classroom2,classroomPoints);
+% 
+% indexPairs = matchFeatures(features1,features2);
+% 
+% matchedPoints1 = valid_points1(indexPairs(:,1),:);
+% matchedPoints2 = valid_points2(indexPairs(:,2),:);
+% 
+% figure; 
+% showMatchedFeatures(testImage2,classroom2,matchedPoints1,matchedPoints2);
+
+maxIndexPairs = 0;
+imageList = ["room1.jpg", "livingRoom1.jpg", "kitchen1.jpg", "classroom1.jpg"];
+
+% Generate the test image
+
+testImage = imread("recognitionImages/kitchen2.jpg");
 testImage2 = imresize(testImage, [640 NaN]); %Nan makes scaling proportional
 testImage2 = im2gray(testImage2);
 
-testImagePoints = detectORBFeatures(testImage2);
+testPoints = detectORBFeatures(testImage2);
 
-[features1,valid_points1] = extractFeatures(testImage2,testImagePoints);
-[features2,valid_points2] = extractFeatures(classroom2,classroomPoints);
 
-indexPairs = matchFeatures(features1,features2);
+for i = 1:length(imageList)
+    
+    % Organizing all the info for the current image we're comparing againts
+    curImage = imread(strcat("recognitionImages/", imageList(i)));
+    curImage2 = imresize(curImage, [640 NaN]); %Nan makes scaling proportional
+    curImage2 = im2gray(curImage2);
+    curImagePoints = detectORBFeatures(curImage2);
+    
+    % Comparing current 'stock image' to the test image
+    [features1,valid_points1] = extractFeatures(curImage2,curImagePoints);
+    [features2,valid_points2] = extractFeatures(testImage2,testPoints);
 
-matchedPoints1 = valid_points1(indexPairs(:,1),:);
-matchedPoints2 = valid_points2(indexPairs(:,2),:);
+    indexPairs = matchFeatures(features1,features2);
 
-figure; 
-showMatchedFeatures(testImage2,classroom2,matchedPoints1,matchedPoints2);
+    matchedPoints1 = valid_points1(indexPairs(:,1),:);
+    matchedPoints2 = valid_points2(indexPairs(:,2),:);
+
+    figure;
+    showMatchedFeatures(curImage2,testImage2,matchedPoints1,matchedPoints2);
+
+end
